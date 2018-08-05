@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player_Controller : MonoBehaviour
+public class Keyboard_Player_Controller : MonoBehaviour
 {
     public float MovementSpeed = 6f;
 
