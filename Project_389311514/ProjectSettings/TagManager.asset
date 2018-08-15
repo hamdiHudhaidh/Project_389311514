@@ -7,6 +7,9 @@ TagManager:
   - Oven
   - Trap1
   - Trap2
+  - Enemy
+  - Egg
+  - Hidden_Player
   layers:
   - Default
   - TransparentFX
