@@ -10,12 +10,16 @@ public class GameManager : MonoBehaviour
 
     void Awake ()
     {
+        currentRound = 1;
         //end game at round 12
     }
 	
 	void Update ()
     {
+        if (true)
+        {
 
+        }
     }
 
     void EndGame()

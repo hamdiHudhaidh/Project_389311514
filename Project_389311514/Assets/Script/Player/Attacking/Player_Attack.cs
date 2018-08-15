@@ -107,6 +107,7 @@ public class Player_Attack : MonoBehaviour
                 // ... the enemy should take damage.
                 enemyHealth.currentEnemyHealth -= normalBulletDamage;
                 enemyHealth.healthBar.fillAmount = enemyHealth.currentEnemyHealth / enemyHealth.initialEnemyHealth;
+                //change location to after enemy is dead
                 //specialAbilityBar += enemyHealth.deathPoints;
             }
             else

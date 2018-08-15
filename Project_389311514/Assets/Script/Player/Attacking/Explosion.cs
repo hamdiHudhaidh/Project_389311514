@@ -6,7 +6,7 @@ public class Explosion : MonoBehaviour
 {
     AudioSource explosionAudio;
 
-	void Start ()
+	void Start ()//make your own sFx
     {
         explosionAudio = GetComponent<AudioSource>();
 

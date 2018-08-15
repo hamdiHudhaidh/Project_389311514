@@ -23,12 +23,12 @@ public class Player_PickUp : MonoBehaviour
         canPickUp = true;
         CamoHatTime = 8;
         speedBoostTime = 15;
-        slowMotionTime = 20;
+        slowMotionTime = 10;
     }
 
     void Update ()
     {
-        if (canPickUp == false && (Input.GetButtonDown("L2") || Input.GetKeyDown(KeyCode.Space)))
+        if (usingTimer == false && canPickUp == false && (Input.GetButtonDown("L2") || Input.GetKeyDown(KeyCode.Space)))
         {
             switch (typeOfEgg)
             {
@@ -146,12 +146,12 @@ public class Player_PickUp : MonoBehaviour
         if (enable == true)
         {
             Time.timeScale = 0.3f;
-            Time.fixedDeltaTime = 0.3f;
+            Time.fixedDeltaTime = Time.timeScale * 0.02f;
         }
         else if (enable == false)
         {
             Time.timeScale = 1f;
-            Time.fixedDeltaTime = 1f;
+            Time.fixedDeltaTime = Time.timeScale * 0.02f;
             canPickUp = true;
             usingTimer = false;
             backPack.GetComponent<Renderer>().material = backPackMaterials[0];
