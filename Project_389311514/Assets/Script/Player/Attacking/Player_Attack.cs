@@ -33,7 +33,7 @@ public class Player_Attack : MonoBehaviour
         specialAbilityBar = 0;
 
         //
-        specialAbilityOn = true;
+        //specialAbilityOn = true;
     }
 	
 
@@ -41,8 +41,8 @@ public class Player_Attack : MonoBehaviour
     {
         if ((Input.GetButtonDown("R2") || Input.GetButtonDown("Fire1")) && canAttack == true && specialAbilityOn == false)
         {
-            canAttack = false;
-            gunAnim.SetBool("Attack", true);
+            //canAttack = false;
+            //gunAnim.SetBool("Attack", true);
             Attack();
             gunAudio.clip = attackAudio;
             gunAudio.Play();
@@ -98,11 +98,9 @@ public class Player_Attack : MonoBehaviour
     {
         if (Physics.Raycast(bulletLocation.transform.position, bulletLocation.transform.forward, out hit, normalBulletRange))
         {
-            EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
-
-            // If the EnemyHealth component exist...
-            if (enemyHealth != null)
+            if (hit.collider.name == "Enemy")
             {
+                EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
                 print("enemy hit");
                 // ... the enemy should take damage.
                 enemyHealth.currentEnemyHealth -= normalBulletDamage;
@@ -110,9 +108,30 @@ public class Player_Attack : MonoBehaviour
                 //change location to after enemy is dead
                 //specialAbilityBar += enemyHealth.deathPoints;
             }
+            else if (hit.collider.name == "Pause_Button")
+            {
+                Screen screenScript = hit.collider.transform.parent.GetComponent<Screen>();
+                print("pause button hit");
+                screenScript.PauseGame();
+            }
+            //add trap & oven
+
+
+            //EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
+
+            // If the EnemyHealth component exist...
+            /*if (enemyHealth != null)
+            {
+                print("enemy hit");
+                // ... the enemy should take damage.
+                enemyHealth.currentEnemyHealth -= normalBulletDamage;
+                enemyHealth.healthBar.fillAmount = enemyHealth.currentEnemyHealth / enemyHealth.initialEnemyHealth;
+                //change location to after enemy is dead
+                //specialAbilityBar += enemyHealth.deathPoints;
+            }*/
             else
             {
-                print("enemy didnt get hit");
+                print("nothing got hit");
             }
         }
     }

@@ -5,21 +5,20 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public int currentRound;
+    public string playerName;
+    public bool gameWon;
+    public bool betweenRounds;
 
-   
 
     void Awake ()
     {
         currentRound = 1;
-        //end game at round 12
+        playerName = "Player_Name";//
     }
 	
-	void Update ()
+    public void WinGame()
     {
-        if (true)
-        {
-
-        }
+        gameWon = true;
     }
 
     void EndGame()
