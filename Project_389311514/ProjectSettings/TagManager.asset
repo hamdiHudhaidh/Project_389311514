@@ -10,6 +10,7 @@ TagManager:
   - Enemy
   - Egg
   - Hidden_Player
+  - Spawn_Point
   layers:
   - Default
   - TransparentFX

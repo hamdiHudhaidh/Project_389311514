@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class Player_Health : MonoBehaviour
 { 
-    public int startingHealth = 100;                           
-    public int currentHealth;
+    public float startingHealth = 100;                           
+    public float currentHealth;
     public Image healthBar;
     public AudioClip deathAudio;
     public AudioClip hurtAudio;
@@ -23,8 +23,8 @@ public class Player_Health : MonoBehaviour
         // Setting up the references.
         anim = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
-        playerMovement = GetComponent<Player_Controller_Movement>();
-        playerAttack = GetComponentInChildren<Player_Attack>();
+        //playerMovement = GetComponent<Player_Controller_Movement>();
+        //playerAttack = GetComponentInChildren<Player_Attack>();
         
         // Set the initial health of the player.
         currentHealth = startingHealth;
@@ -33,11 +33,11 @@ public class Player_Health : MonoBehaviour
 
     void Update()
     {
-        if (currentHealth != 100 && !isDead)
+        /*if (currentHealth != 100 && !isDead)
         {
             Invoke("ReturnHealth", 2);
-        }
-
+        }*/
+        print(currentHealth);
         //change the movement animation depending on the health
     }
 

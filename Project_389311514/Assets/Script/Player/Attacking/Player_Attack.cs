@@ -66,6 +66,7 @@ public class Player_Attack : MonoBehaviour
         Mathf.Clamp(specialAbilityBar, 0, 100);
 	}
 
+    //called after an animation
     public void AllowAttack()
     {
         if (specialAbilityOn == true)// work on this more after animation clear
@@ -80,7 +81,6 @@ public class Player_Attack : MonoBehaviour
         }
     }
 
-    //called after an animation
     void EnableSpecialAbility()
     {
         specialAbilityOn = true;

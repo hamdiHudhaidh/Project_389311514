@@ -5,36 +5,40 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
     public GameObject enemy;
-
-    //
-    public GameObject spawner;
+    public GameManager gMs;
 
     GameObject[] enemies;
-    GameObject[] spawners;
-    Transform[] spawnLocations;
+    GameObject[] spawnLocations;
+
+    float repeatRate;
+    float maximumEnemies;
+    float amountOfEnemies;
 
 	void Start ()
     {
-        //SettingSpawners();
+        repeatRate = 3;
+        maximumEnemies = 20;
+        gMs.GetComponent<GameManager>();
 
-        //
-        //enemy.transform.position = spawner.transform.position;
-        Instantiate(enemy, transform.position, transform.rotation);
-        print("enemy" + enemy.transform.position + "spawner" + spawner.transform.position);
+        InvokeRepeating("CheckSpawn", 0, repeatRate);//change to a timer in update that checks if in round
     }
-	
-	void Update ()
-    {
-		
-	}
 
-    void SettingSpawners()
+    void CheckSpawn()
     {
-        for (int i = 0; i < spawners.Length; i++)
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        print(enemies.Length);
+
+        spawnLocations = GameObject.FindGameObjectsWithTag("Spawn_Point");
+
+        amountOfEnemies = gMs.currentRound;
+
+        if (enemies.Length < maximumEnemies)
         {
-            if (spawners[i].activeInHierarchy)
+            for (int i = 0; i < amountOfEnemies; i++)
             {
+                Transform currentSpawnPoint = spawnLocations[Random.Range(0, spawnLocations.Length)].transform;
 
+                Instantiate(enemy, currentSpawnPoint.position, currentSpawnPoint.rotation);
             }
         }
     }
