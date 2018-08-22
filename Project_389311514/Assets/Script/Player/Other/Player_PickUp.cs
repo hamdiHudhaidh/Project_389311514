@@ -43,7 +43,7 @@ public class Player_PickUp : MonoBehaviour
                     usingTimer = true;
                     break;
                 case "Gold Coin":
-                    hasGoldCoin = true;
+                    GoldCoin(true);
                     break;
                 case "Slow Motion":
                     Slow_Motion(true);
@@ -102,7 +102,6 @@ public class Player_PickUp : MonoBehaviour
             Destroy(collision.gameObject);
         }
     }
-
     
 
     void Camouflage_Hat(bool enable)
@@ -114,6 +113,21 @@ public class Player_PickUp : MonoBehaviour
         else if (enable == false)
         {
             this.gameObject.tag = "Player";
+            canPickUp = true;
+            usingTimer = false;
+            backPack.GetComponent<Renderer>().material = backPackMaterials[0];
+        }
+    }
+
+    public void GoldCoin(bool enable)
+    {
+        if (enable == true)
+        {
+            hasGoldCoin = true;//add spawning a gold coin at the top of the gun
+        }
+        else if (enable == false)
+        {
+            hasGoldCoin = false;
             canPickUp = true;
             usingTimer = false;
             backPack.GetComponent<Renderer>().material = backPackMaterials[0];

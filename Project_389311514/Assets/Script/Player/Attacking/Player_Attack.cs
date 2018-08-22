@@ -11,6 +11,7 @@ public class Player_Attack : MonoBehaviour
     public GameObject specialAttackBullet;
     public GameObject glove;
     public GameObject bulletLocation;
+    public Player_PickUp pUs;
 
     AudioSource gunAudio;
     bool canAttack;
@@ -24,6 +25,8 @@ public class Player_Attack : MonoBehaviour
 
     void Awake ()
     {
+        pUs = transform.parent.GetComponent<Player_PickUp>();
+
         gunAnim = GetComponent<Animator>();
 
         gunAudio = GetComponent<AudioSource>();
@@ -93,7 +96,6 @@ public class Player_Attack : MonoBehaviour
         specialAbilityBar -= decreaseAmount;
     }
 
-    //shoots a raycast at the enemy and decreases the enemy's health and adds to the special ability bar
     void Attack()
     {
         if (Physics.Raycast(bulletLocation.transform.position, bulletLocation.transform.forward, out hit, normalBulletRange))
@@ -101,8 +103,6 @@ public class Player_Attack : MonoBehaviour
             if (hit.collider.name == "Enemy")
             {
                 EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
-                print("enemy hit");
-                // ... the enemy should take damage.
                 enemyHealth.currentEnemyHealth -= normalBulletDamage;
                 enemyHealth.healthBar.fillAmount = enemyHealth.currentEnemyHealth / enemyHealth.initialEnemyHealth;
                 //change location to after enemy is dead
@@ -111,27 +111,25 @@ public class Player_Attack : MonoBehaviour
             else if (hit.collider.name == "Pause_Button")
             {
                 Screen screenScript = hit.collider.transform.parent.GetComponent<Screen>();
-                print("pause button hit");
                 screenScript.PauseGame();
             }
-            //add trap & oven
-
-
-            //EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
-
-            // If the EnemyHealth component exist...
-            /*if (enemyHealth != null)
+            else if (hit.collider.name == "Oven" && pUs.hasGoldCoin == true)
             {
-                print("enemy hit");
-                // ... the enemy should take damage.
-                enemyHealth.currentEnemyHealth -= normalBulletDamage;
-                enemyHealth.healthBar.fillAmount = enemyHealth.currentEnemyHealth / enemyHealth.initialEnemyHealth;
-                //change location to after enemy is dead
-                //specialAbilityBar += enemyHealth.deathPoints;
-            }*/
-            else
+                Oven ovenScript = hit.collider.transform.parent.GetComponent<Oven>();
+                ovenScript.UseOven();
+                pUs.GoldCoin(false);
+            }
+            else if (hit.collider.name == "Trap" && pUs.hasGoldCoin == true)
             {
-                print("nothing got hit");
+                Trap trapScript = hit.collider.transform.parent.GetComponent<Trap>();
+                trapScript.useTrap();
+                pUs.GoldCoin(false);
+            }
+            else if (hit.collider.name == "Lock" && pUs.hasGoldCoin == true)
+            {
+                Map_Extention mEs = hit.collider.transform.parent.GetComponent<Map_Extention>();
+                mEs.OpenArea();
+                pUs.GoldCoin(false);
             }
         }
     }
