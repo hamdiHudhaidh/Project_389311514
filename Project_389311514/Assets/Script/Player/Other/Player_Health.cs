@@ -37,7 +37,7 @@ public class Player_Health : MonoBehaviour
         {
             Invoke("ReturnHealth", 2);
         }*/
-        print(currentHealth);
+        //print(currentHealth);
         //change the movement animation depending on the health
     }
 

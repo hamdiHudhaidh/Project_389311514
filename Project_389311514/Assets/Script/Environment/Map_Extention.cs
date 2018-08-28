@@ -4,19 +4,9 @@ using UnityEngine;
 
 public class Map_Extention : MonoBehaviour
 {
-
-	void Start ()
-    {
-		
-	}
-	
-	void Update ()
-    {
-		
-	}
-
     public void OpenArea()
     {
-
+        //add deslove effect
+        Destroy(this.gameObject);
     }
 }

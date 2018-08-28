@@ -26,7 +26,7 @@ public class Spawner : MonoBehaviour
     void CheckSpawn()
     {
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        print(enemies.Length);
+        //print(enemies.Length);
 
         spawnLocations = GameObject.FindGameObjectsWithTag("Spawn_Point");
 
