@@ -42,9 +42,9 @@ public class Player_PickUp : MonoBehaviour
                     timeLeft = speedBoostTime;
                     usingTimer = true;
                     break;
-                case "Gold Coin":
+                /*case "Gold Coin":
                     GoldCoin(true);
-                    break;
+                    break;*/
                 case "Slow Motion":
                     Slow_Motion(true);
                     timeLeft = slowMotionTime;
@@ -82,7 +82,7 @@ public class Player_PickUp : MonoBehaviour
             Egg eggScript = collision.gameObject.GetComponent<Egg>();
             typeOfEgg = eggScript.typeOfEgg;
             canPickUp = false;
-            print("got egg of type:  " + typeOfEgg);
+            //print("got egg of type:  " + typeOfEgg);
             switch (typeOfEgg)
             {
                 case "Camouflage Hat":
@@ -93,6 +93,7 @@ public class Player_PickUp : MonoBehaviour
                     break;
                 case "Gold Coin":
                     backPack.GetComponent<Renderer>().material = backPackMaterials[3];
+                    GoldCoin(true);
                     break;
                 case "Slow Motion":
                     backPack.GetComponent<Renderer>().material = backPackMaterials[4];

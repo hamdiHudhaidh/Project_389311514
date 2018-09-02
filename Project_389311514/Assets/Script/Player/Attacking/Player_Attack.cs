@@ -113,7 +113,7 @@ public class Player_Attack : MonoBehaviour
                 Screen screenScript = hit.collider.transform.parent.GetComponent<Screen>();
                 screenScript.PauseGame();
             }
-            else if (hit.collider.name == "Oven" && pUs.hasGoldCoin == true)
+            else if (hit.collider.name == "Oven_Operator" && pUs.hasGoldCoin == true)
             {
                 Oven ovenScript = hit.collider.transform.parent.GetComponent<Oven>();
                 ovenScript.UseOven();

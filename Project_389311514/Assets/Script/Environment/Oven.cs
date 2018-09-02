@@ -19,6 +19,7 @@ public class Oven : MonoBehaviour
     {
         downPosition = gate.transform.position;
         upPosition = downPosition + new Vector3(0, 4, 0);
+        speed = 1f;
     }
 	
 	void FixedUpdate ()
@@ -27,25 +28,23 @@ public class Oven : MonoBehaviour
         {
             if (gateUp == true)
             {
-                gate.transform.position = Vector3.Lerp(downPosition, upPosition, Mathf.PingPong(Time.time * speed, 1.0f));
+                gate.transform.position = Vector3.Lerp(gate.transform.position, upPosition, Mathf.PingPong(Time.deltaTime * speed, 1.0f));
 
-                if (gate.transform.position == upPosition)
+                if (gate.transform.position.y >= -0.18)
                 {
-                    gateShouldMove = false;
                     //do fire effect
                     shouldKill = true;
-                    Kill();
                     Invoke("Kill", 5);
+                    gateShouldMove = false;
                 }
             }
             else if (gateUp == false)
             {
-                gate.transform.position = Vector3.Lerp(upPosition, downPosition, Mathf.PingPong(Time.time * speed, 1.0f));
+                gate.transform.position = Vector3.Lerp(gate.transform.position, downPosition, Mathf.PingPong(Time.deltaTime * speed, 1.0f));
 
-                if (gate.transform.position == downPosition)
+                if (gate.transform.position.y <= -4.1)
                 {
                     gateShouldMove = false;
-                    gateUp = true;
                 }
             }
         }
@@ -53,31 +52,27 @@ public class Oven : MonoBehaviour
 
     public void UseOven()
     {
-        gateShouldMove = true;
         gateUp = true;
+        gateShouldMove = true;
     }
 
     void Kill()
     {
+        gateUp = false;
+        shouldKill = false;
         gateShouldMove = true;
-        gateUp = true;
     }
 
-    /*void OnTriggerEnter(Collider[] other)
+    void OnTriggerStay(Collider other)
     {
         if (shouldKill == true)
         {
-            //GameObject[] chickensInOven = other.
-            for (int i = 0; i < other.Length; i++)
+            if (other.gameObject.tag == "Enemy")
             {
-                Instantiate(nugget, other[i].gameObject.transform.position, other[i].gameObject.transform.rotation);
-
-                Destroy(other[i]);
-                if (i == other.Length)
-                {
-                    shouldKill = false;
-                }
+                Vector3 position = other.gameObject.transform.position;
+                Instantiate(nugget, other.gameObject.transform.position, other.gameObject.transform.rotation);
+                Destroy(other.gameObject);
             }
         }
-    }*/
+    }
 }

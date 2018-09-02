@@ -11,6 +11,7 @@ TagManager:
   - Egg
   - Hidden_Player
   - Spawn_Point
+  - PathFindingPoint
   layers:
   - Default
   - TransparentFX

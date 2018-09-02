@@ -4,64 +4,39 @@ using UnityEngine;
 
 public class Trap : MonoBehaviour
 {
-    public GameObject[] trapPartsA;
-    public GameObject[] trapPartsB;
+    public Animator anim;
+    public AudioSource audio;
+    public AudioClip trapAudio;
 
-    bool trapWorking;
-    bool partsA;
-    bool usingTimer;
-    float timeLeft;
-    float speed;
+    bool colliderOn;
 
-    Vector3 downPosition;
-    Vector3 upPosition;
-
-
-    void Start ()
+    void Awake ()
     {
-
-    }
-	
-	void FixedUpdate ()
-    {
-        if (trapWorking == true)
-        {
-            if (partsA == true)
-            {
-                for (int i = 0; i < trapPartsA.Length; i++)
-                {
-                    downPosition = trapPartsA[i].transform.position;
-                    upPosition = downPosition + new Vector3(0, 4, 0);
-
-                    trapPartsA[i].transform.position = Vector3.Lerp(downPosition, upPosition, Mathf.PingPong(Time.time * speed, 1.0f));
-
-
-                }
-            }
-            else if (partsA == false)
-            {
-
-            }
-        }
-
-        //after time change trapWorking = false
-        //get parts down
-        if (usingTimer == true)
-        {
-            timeLeft -= Time.deltaTime;
-
-            if (timeLeft <= 0)
-            {
-
-                partsA = true;
-                trapWorking = false;
-            }
-        }
+        anim = GetComponent<Animator>();
+        audio = GetComponent<AudioSource>();
     }
 
     public void useTrap()
     {
-        trapWorking = true;
+        anim.SetBool("Trap_On", true);
+        audio.clip = trapAudio;
+        audio.Play();
+        colliderOn = true;
+    }
+
+    public void AnimationDone()
+    {
+        anim.SetBool("Trap_On", false);
+        audio.Stop();
+        colliderOn = false;
+    }
+
+    public void OnCollisionEnter(Collision collision)
+    {
+        if (colliderOn == true && collision.gameObject.CompareTag("Enemy"))
+        {
+            Destroy(collision.gameObject);
+        }
     }
 }
 
