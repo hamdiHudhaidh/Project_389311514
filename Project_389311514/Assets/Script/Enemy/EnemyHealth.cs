@@ -14,6 +14,7 @@ public class EnemyHealth : MonoBehaviour
 	void Awake ()
     {
         currentEnemyHealth = initialEnemyHealth;
+        deathPoints = 5;
 	}
 	
 	void Update ()
@@ -25,6 +26,8 @@ public class EnemyHealth : MonoBehaviour
             {
                 Instantiate(egg, transform.position, transform.rotation);
             }
+            //Player_Attack pAs = GameObject.FindGameObjectWithTag("Player").GetComponent<Player_Attack>();
+            //pAs.specialAbilityBar += deathPoints;
             Destroy(this.gameObject);
         }
 	}

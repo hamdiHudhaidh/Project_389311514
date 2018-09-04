@@ -12,6 +12,8 @@ TagManager:
   - Hidden_Player
   - Spawn_Point
   - PathFindingPoint
+  - Map
+  - Lock
   layers:
   - Default
   - TransparentFX

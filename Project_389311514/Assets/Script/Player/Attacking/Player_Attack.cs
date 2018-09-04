@@ -100,13 +100,11 @@ public class Player_Attack : MonoBehaviour
     {
         if (Physics.Raycast(bulletLocation.transform.position, bulletLocation.transform.forward, out hit, normalBulletRange))
         {
-            if (hit.collider.name == "Enemy")
+            if /*(hit.collider.name == "Enemy")*/(hit.collider.gameObject.CompareTag("Enemy"))
             {
                 EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
                 enemyHealth.currentEnemyHealth -= normalBulletDamage;
                 enemyHealth.healthBar.fillAmount = enemyHealth.currentEnemyHealth / enemyHealth.initialEnemyHealth;
-                //change location to after enemy is dead
-                //specialAbilityBar += enemyHealth.deathPoints;
             }
             else if (hit.collider.name == "Pause_Button")
             {

@@ -16,7 +16,7 @@ public class Spawner : MonoBehaviour
 
 	void Start ()
     {
-        repeatRate = 3;
+        repeatRate = 8;
         maximumEnemies = 20;
         gMs.GetComponent<GameManager>();
 

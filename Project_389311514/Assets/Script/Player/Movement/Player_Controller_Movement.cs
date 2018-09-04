@@ -15,6 +15,9 @@ public class Player_Controller_Movement : MonoBehaviour
     void Awake()
     {
         anim = GetComponent<Animator>();
+
+        playerMapArea = GameObject.FindGameObjectWithTag("Map");
+        mapAreas = GameObject.FindGameObjectsWithTag("Map");
     }
 	
 	void FixedUpdate ()
@@ -94,5 +97,23 @@ public class Player_Controller_Movement : MonoBehaviour
             walking = false;
         }
         anim.SetBool("IsWalking", walking);
+    }
+
+    //for Enemy AI
+    public GameObject playerMapArea;
+    public GameObject[] mapAreas;
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Map"))
+        {
+            for (int i = 0; i < mapAreas.Length; i++)
+            {
+                if (collision.gameObject == mapAreas[i])
+                {
+                    playerMapArea = mapAreas[i];
+                }
+            }
+        }
     }
 }
