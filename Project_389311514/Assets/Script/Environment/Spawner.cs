@@ -6,40 +6,71 @@ public class Spawner : MonoBehaviour
 {
     public GameObject enemy;
     public GameManager gMs;
+    public AudioClip spawnClip;
 
     GameObject[] enemies;
     GameObject[] spawnLocations;
+    public AudioSource audio;
 
     float repeatRate;
     float maximumEnemies;
-    float amountOfEnemies;
+    bool spawnOn;
+    float tillNextSpawn;
+
 
 	void Start ()
     {
-        repeatRate = 8;
+        repeatRate = 1;
         maximumEnemies = 20;
+        tillNextSpawn = 5;
+        repeatRate = gMs.currentRound;
         gMs.GetComponent<GameManager>();
-
-        InvokeRepeating("CheckSpawn", 0, repeatRate);//change to a timer in update that checks if in round
+        audio.GetComponent<AudioSource>();
     }
 
-    void CheckSpawn()
+    void Update()
+    {
+        if (gMs.betweenRounds == false)
+        {
+            if (spawnOn == true)
+            {
+                for (int i = 1; i <= repeatRate; i++)
+                {
+                    spawnOn = false;
+                    tillNextSpawn = 5;
+                    maximumEnemies += gMs.currentRound;
+                    Invoke("Spawn", i);
+                }
+            }
+
+            if (spawnOn == false)
+            {
+                tillNextSpawn -= Time.deltaTime;
+
+                if (tillNextSpawn <= 0)
+                {
+                    spawnOn = true;
+                }
+            }
+        }
+    }
+
+    void Spawn()
     {
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        //print(enemies.Length);
 
         spawnLocations = GameObject.FindGameObjectsWithTag("Spawn_Point");
 
-        amountOfEnemies = gMs.currentRound;
+        repeatRate = gMs.currentRound;
 
         if (enemies.Length < maximumEnemies)
         {
-            for (int i = 0; i < amountOfEnemies; i++)
-            {
-                Transform currentSpawnPoint = spawnLocations[Random.Range(0, spawnLocations.Length)].transform;
+            Transform currentSpawnPoint = spawnLocations[Random.Range(0, spawnLocations.Length)].transform;
 
-                Instantiate(enemy, currentSpawnPoint.position, currentSpawnPoint.rotation);
-            }
+            Instantiate(enemy, currentSpawnPoint.position, currentSpawnPoint.rotation);
+
+            audio.clip = spawnClip;
+            audio.Play();
         }
     }
 }

@@ -11,11 +11,15 @@ public class EnemyHealth : MonoBehaviour
     public Image healthBar;
     public GameObject egg;
 
+    MemberConfig conf;
+
 	void Awake ()
     {
         currentEnemyHealth = initialEnemyHealth;
         deathPoints = 5;
-	}
+
+        conf = FindObjectOfType<MemberConfig>();
+    }
 	
 	void Update ()
     {
@@ -26,8 +30,11 @@ public class EnemyHealth : MonoBehaviour
             {
                 Instantiate(egg, transform.position, transform.rotation);
             }
-            //Player_Attack pAs = GameObject.FindGameObjectWithTag("Player").GetComponent<Player_Attack>();
-            //pAs.specialAbilityBar += deathPoints;
+            Player_Attack pAs = GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Player_Attack>();
+            pAs.specialAbilityBar += deathPoints;
+            Mathf.Clamp(pAs.specialAbilityBar, 0, 100);
+            pAs.sAI.fillAmount = pAs.specialAbilityBar / 100;//
+
             Destroy(this.gameObject);
         }
 	}

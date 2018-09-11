@@ -6,17 +6,20 @@ public class Oven : MonoBehaviour
 {
     public GameObject nugget;
     public GameObject gate;
+    public AudioClip[] ovenClips;
 
     bool gateUp;
     bool gateShouldMove;
     bool shouldKill;
 
+    AudioSource ovenAudio;
     Vector3 downPosition;
     Vector3 upPosition;
     float speed;
 
 	void Awake ()
     {
+        ovenAudio = GetComponent<AudioSource>();
         downPosition = gate.transform.position;
         upPosition = downPosition + new Vector3(0, 4, 0);
         speed = 1f;
@@ -36,6 +39,8 @@ public class Oven : MonoBehaviour
                     shouldKill = true;
                     Invoke("Kill", 5);
                     gateShouldMove = false;
+                    ovenAudio.clip = ovenClips[2];
+                    ovenAudio.Play();
                 }
             }
             else if (gateUp == false)
@@ -54,13 +59,18 @@ public class Oven : MonoBehaviour
     {
         gateUp = true;
         gateShouldMove = true;
+        ovenAudio.clip = ovenClips[0];
+        ovenAudio.Play();
     }
 
     void Kill()
     {
+        ovenAudio.Stop();
         gateUp = false;
         shouldKill = false;
         gateShouldMove = true;
+        ovenAudio.clip = ovenClips[3];
+        ovenAudio.Play();
     }
 
     void OnTriggerStay(Collider other)

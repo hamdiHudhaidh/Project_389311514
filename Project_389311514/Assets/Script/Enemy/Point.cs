@@ -5,13 +5,15 @@ using UnityEngine;
 public class Point : MonoBehaviour
 {
     public float accShortDist;
-    public Transform from;
+    public Point from;
     public bool visited;
+    public bool doneWithPoint;
 
 	void Start ()
     {
         accShortDist = float.MaxValue;
         visited = false;
+        doneWithPoint = false;
 	}
 	
 	void Update ()

@@ -4,15 +4,10 @@ using UnityEngine;
 
 public class MemberConfig : MonoBehaviour
 {
-    public float maxFOV = 180;
-    public float maxAcceleration;
-    public float maxVelocity;
+    public GameObject[] members;
 
-    //wander
-    public float wanderJitter;
-    public float wanderRadius;
-    public float wanderDistance;
-    public float wanderPriority;
+    public float maxFOV = 180;
+    public float maxVelocity;
 
     //cohesion
     public float cohesionRadius;
@@ -33,4 +28,9 @@ public class MemberConfig : MonoBehaviour
     //follow
     public float followRadius;
     public float followPriority;
+
+    public void Update()
+    {
+        members = GameObject.FindGameObjectsWithTag("Enemy");
+    }
 }

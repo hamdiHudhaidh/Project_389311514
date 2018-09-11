@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Screen : MonoBehaviour
 {
@@ -29,29 +30,49 @@ public class Screen : MonoBehaviour
 
     [Header("pause menu controls")]
     public GameObject controls;
+    public Button pMcButton;
+    bool instOn;
 
 
-    float roundTime;
+    public float roundTime;
+    float initialRoundTime;
     float betweenRoundTime;
+    float initialBetweenRoundTime;
     GameManager gMs;
     bool resumingGame;
     float resumingGameTime;
+    float initialResumingGameTime;
 
     float first;
+    PM_Controls pauseMenuconrols;
+
+    MemberConfig conf;
+
+    int startScene;
+
+    Color green = Color.green;
 
     void Awake ()
     {
         GameObject gameManagerObject = GameObject.Find("Game_Manager");
         gMs = gameManagerObject.GetComponent<GameManager>();
 
+        conf = FindObjectOfType<MemberConfig>();
+
         gMs.betweenRounds = true;
-        roundTime = 10f;//
-        betweenRoundTime = 10f;//
+        roundTime = 90;
+        initialRoundTime = 90;
+        betweenRoundTime = 10;//
+        initialBetweenRoundTime = 30;
         resumingGameTime = 5f;
+
+        startScene = 0;
 
         roundText.text = "Round 1 Start's in";
 
         timerCanvas.SetActive(true);
+
+        pauseMenuconrols = GetComponent<PM_Controls>();
     }
 	
 	void Update ()
@@ -63,18 +84,23 @@ public class Screen : MonoBehaviour
                 roundTime -= Time.deltaTime;
                 timerText.text = roundTime.ToString("##");
 
-                if (roundTime <= 0)
+                if (roundTime <= 0 && conf.members.Length <= 0)
                 {
-                    gMs.currentRound++;
-                    gMs.betweenRounds = true;
-                    roundText.text = "Round " + gMs.currentRound.ToString() + " Start's in";
-                    roundTime = 10f;//
-                    if (gMs.currentRound == 13)
+                    roundTime = 0;
+                    if (conf.members.Length <= 0)
                     {
-                        timerCanvas.SetActive(false);
-                        winCanvas.SetActive(true);
-                        winPlayerName.text = gMs.playerName;
-                        gMs.WinGame();
+                        gMs.currentRound++;
+                        gMs.betweenRounds = true;
+                        roundText.text = "Round " + gMs.currentRound.ToString() + " Start's in";
+                        roundTime = initialRoundTime;
+                        gMs.ChangeMusic();
+                        if (gMs.currentRound == 13 && gMs.gameMode == 1)
+                        {
+                            timerCanvas.SetActive(false);
+                            winCanvas.SetActive(true);
+                            winPlayerName.text = gMs.playerName;
+                            gMs.WinGame();
+                        }
                     }
                 }
             }
@@ -87,7 +113,8 @@ public class Screen : MonoBehaviour
                 {
                     roundText.text = "Round " + gMs.currentRound.ToString();
                     gMs.betweenRounds = false;
-                    betweenRoundTime = 10f;//
+                    betweenRoundTime = initialBetweenRoundTime;
+                    gMs.ChangeMusic();
                 }
             }
         }
@@ -100,7 +127,6 @@ public class Screen : MonoBehaviour
             }
             resumingGameTime = first - Time.realtimeSinceStartup;
             pauseMenu_ResumeTime_Txt.text = resumingGameTime.ToString("##");
-            print(Time.realtimeSinceStartup + "    " + first);
             if (Time.realtimeSinceStartup > first)
             {
                 timerCanvas.SetActive(true);
@@ -108,8 +134,13 @@ public class Screen : MonoBehaviour
                 gamePaused = false;
                 resumingGame = false;
                 Time.timeScale = 1;//fix to match slow motion effect
-                betweenRoundTime = 5f;
+                betweenRoundTime = initialBetweenRoundTime;
             }
+        }
+
+        if (instOn == true && Input.GetButtonUp("X"))
+        {
+            pMcButton.onClick.Invoke();
         }
     }
 
@@ -119,7 +150,9 @@ public class Screen : MonoBehaviour
         pauseGameCanvas.SetActive(true);
         pauseMenu_Buttons.SetActive(true);
         pauseMenu_ResumeTime.SetActive(false);
+        pauseMenuconrols.enabled = !pauseMenuconrols.enabled;
         Time.timeScale = 0;
+        first = 0;
     }
 
     public void ResumeGame()
@@ -127,19 +160,34 @@ public class Screen : MonoBehaviour
         resumingGame = true;
         pauseMenu_Buttons.SetActive(false);
         pauseMenu_ResumeTime.SetActive(true);
+        pauseMenuconrols.enabled = !pauseMenuconrols.enabled;
     }
 
-    public void Controls()
+    public void Controls()//button
     {
         pauseGameCanvas.SetActive(false);
         controls.SetActive(true);
+        Image img = pMcButton.GetComponent<Image>();
+        img.color = green;
+        instOn = true;
+        pauseMenuconrols.enabled = !pauseMenuconrols.enabled;
     }
 
-    public void Controls_Back()
+    public void Controls_Back()//button
     {
         controls.SetActive(false);
         pauseGameCanvas.SetActive(true);
         pauseMenu_Buttons.SetActive(true);
         pauseMenu_ResumeTime.SetActive(false);
+        instOn = false;
+        pauseMenuconrols.enabled = !pauseMenuconrols.enabled;
+    }
+
+    public void Quit()//button
+    {
+        print("quiting");
+        Info iS = FindObjectOfType<Info>();
+        Destroy(iS.gameObject);
+        SceneManager.LoadScene(startScene);
     }
 }

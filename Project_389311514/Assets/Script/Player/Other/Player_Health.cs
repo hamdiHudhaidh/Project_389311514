@@ -11,38 +11,33 @@ public class Player_Health : MonoBehaviour
     public AudioClip deathAudio;
     public AudioClip hurtAudio;
 
-
-    Animator anim;                                              // Reference to the Animator component.
-    AudioSource playerAudio;                                    // Reference to the AudioSource component.
-    Player_Controller_Movement playerMovement;                  // Reference to the player's movement.
-    Player_Attack playerAttack;                                 // Reference to the PlayerShooting script.
-    bool isDead;                                                // Whether the player is dead.
+                                              
+    Animator anim;                            
+    AudioSource playerAudio;                  
+    Player_Controller_Movement playerMovement;
+    Player_Attack playerAttack;               
+    bool isDead;
+    float nuggetPoints;
+    GameManager gMs;
 
     void Awake()
     {
-        // Setting up the references.
         anim = GetComponent<Animator>();
         playerAudio = GetComponent<AudioSource>();
-        //playerMovement = GetComponent<Player_Controller_Movement>();
-        //playerAttack = GetComponentInChildren<Player_Attack>();
+        playerMovement = GetComponent<Player_Controller_Movement>();
+        playerAttack = GetComponentInChildren<Player_Attack>();
+        gMs = FindObjectOfType<GameManager>();
         
-        // Set the initial health of the player.
         currentHealth = startingHealth;
     }
 
 
     void Update()
     {
-        /*if (currentHealth != 100 && !isDead)
-        {
-            Invoke("ReturnHealth", 2);
-        }*/
-        //print(currentHealth);
-        //change the movement animation depending on the health
     }
 
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
         // Reduce the current health by the damage amount.
         currentHealth -= amount;
@@ -77,10 +72,16 @@ public class Player_Health : MonoBehaviour
         // Turn off the movement and shooting scripts.
         playerMovement.enabled = false;
         playerAttack.enabled = false;
+
+        gMs.LostGame();
     }
 
-    void ReturnHealth()
+    public void OnTriggerEnter(Collider collision)
     {
-        currentHealth += 15;
+        if (collision.gameObject.CompareTag("Nugget") && currentHealth > 100)
+        {
+            currentHealth += nuggetPoints;
+            Mathf.Clamp(currentHealth, 0, 100);
+        }
     }
 }

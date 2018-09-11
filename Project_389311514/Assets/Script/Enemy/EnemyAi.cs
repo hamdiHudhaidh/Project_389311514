@@ -24,21 +24,21 @@ public class EnemyAi : MonoBehaviour
     bool attacking;
 
     //for first step
-    GameObject selfMapArea;
+    public GameObject selfMapArea;
     public GameObject[] mapAreas;
 
     public MemberConfig conf;
-    public List<EnemyAi> members;
     public Vector3 position;
     public Vector3 velocity;
     public Vector3 acceleration;
 
 
+    public bool shouldCont;
+
     void Awake ()
     {
         rB.GetComponent<Rigidbody>();
         anim.GetComponent<Animator>();
-        members = new List<EnemyAi>();
         chickenAudio.GetComponent<AudioSource>();
         player = GameObject.FindGameObjectWithTag("Player");
         pFs = GetComponent<Pathfinding>();
@@ -48,9 +48,7 @@ public class EnemyAi : MonoBehaviour
 
         selfMapArea = GameObject.FindGameObjectWithTag("Map");
 
-        //target = player.transform.position;
-
-        speed = 3f;
+        speed = 10f;
 
         attackDistance = 2f;
 
@@ -63,51 +61,43 @@ public class EnemyAi : MonoBehaviour
     {
         IfNeedPathFinding();
 
-        //movement
-        transform.LookAt(target);
-        rB.AddForce(transform.forward * speed * 10f);//for friction
-        rB.velocity = Vector3.ClampMagnitude(rB.velocity, speed);
-
-        //
-        /*acceleration = Combine();
-        acceleration = Vector3.ClampMagnitude(acceleration, conf.maxAcceleration);
-        velocity = velocity + acceleration * Time.deltaTime;
-        velocity = Vector3.ClampMagnitude(velocity, conf.maxVelocity);
-        position = position + velocity * Time.deltaTime;
-        transform.LookAt(target);
-        transform.position = transform.position;*/
+        if (attacking == false)
+        {
+            rB.velocity += Combine();
+            rB.velocity = Vector3.ClampMagnitude(rB.velocity, conf.maxVelocity);
+            transform.LookAt(target);
+        }
     }
 
     void IfNeedPathFinding()
     {
-        //check if the player is on the same map area
         if (selfMapArea == pCmS.playerMapArea)
         {
             ChaseAndAttack();
         }
         else
         {
-            pFs.FindPath(0);
+            if (Vector3.Distance(gameObject.transform.position, target) < attackDistance)
+            {
+                shouldCont = true;
+            }
+            pFs.FindPath();
         }
     }
 
-    void ChaseAndAttack()//add collision avoidancce
+    void ChaseAndAttack()
     {
-        if (Vector3.Distance(target, transform.position) <= attackDistance && canAttack == true)
+        //print(Vector3.Distance(player.transform.position, transform.position));
+        if (Vector3.Distance(player.transform.position, transform.position) <= attackDistance && canAttack == true)
         {
-            //change canAttack to false and change it backafter anim
+            //rB.isKinematic = true;
             canAttack = false;
-            attacking = true;
-            //play attack anim
+            //attacking = true;
             anim.SetBool("Attack", true);
-            //play sound
             chickenAudio.clip = attackAudio;
             chickenAudio.Play();
-            //deduct health
-            Player_Health playerHealth = player.GetComponent<Player_Health>();//change to check if at point of attack the playert is still close
-            playerHealth.currentHealth -= attackDamage;
         }
-        else if (attacking == false)
+        else
         {
             target = player.transform.position;
         }
@@ -117,8 +107,14 @@ public class EnemyAi : MonoBehaviour
     void EnableAttack()
     {
         canAttack = true;
-        attacking = false;
+        //attacking = false;
+        //rB.isKinematic = false;
         anim.SetBool("Attack", false);
+        if (Vector3.Distance(player.transform.position, transform.position) <= attackDistance && canAttack == true)
+        {
+            Player_Health playerHealth = player.GetComponent<Player_Health>();
+            playerHealth.TakeDamage(attackDamage);
+        }
     }
 
     void OnCollisionEnter(Collision collision)
@@ -223,32 +219,14 @@ public class EnemyAi : MonoBehaviour
 
     Vector3 Follow()
     {
-        return new Vector3(0,0,0);
+        Vector3 directionToTarget = target - transform.position;
+        directionToTarget.Normalize();
+
+        Vector3 position = (directionToTarget * speed) * Time.deltaTime;
+
+
+        return position;
     }
-
-    /*Vector3 Avoidance()
-    {
-        Vector3 avoidVector = new Vector3();
-        var enemyList = level.GetEnemies(this, conf.avoidanceRadius);
-
-        if (enemyList.Count == 0)
-        {
-            return avoidVector;
-        }
-
-        foreach (var enemy in enemyList)
-        {
-            avoidVector += RunAway(enemy.position);
-        }
-
-        return avoidVector.normalized;
-    }
-
-    Vector3 RunAway(Vector3 target)
-    {
-        Vector3 neededVelocity = (transform.position - target).normalized * conf.maxVelocity;
-        return neededVelocity - velocity;
-    }*/
 
     bool isInFov(Vector3 vec)
     {
@@ -259,7 +237,7 @@ public class EnemyAi : MonoBehaviour
     {
         List<EnemyAi> neighborsFound = new List<EnemyAi>();
 
-        foreach (var otherMember in members)
+        foreach (var otherMember in conf.members)
         {
             if (otherMember == member)
             {
@@ -268,10 +246,9 @@ public class EnemyAi : MonoBehaviour
 
             if (Vector3.Distance(member.transform.position, otherMember.transform.position) <= radius)
             {
-                neighborsFound.Add(otherMember);
+                neighborsFound.Add(otherMember.GetComponent<EnemyAi>());
             }
         }
-
         return neighborsFound;
     }
 }

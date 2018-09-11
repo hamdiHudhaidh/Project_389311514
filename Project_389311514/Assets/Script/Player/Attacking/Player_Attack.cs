@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player_Attack : MonoBehaviour
 {
@@ -9,9 +10,9 @@ public class Player_Attack : MonoBehaviour
     public AudioClip specialAttackAudio;
     public float specialAbilityBar;
     public GameObject specialAttackBullet;
-    public GameObject glove;
     public GameObject bulletLocation;
     public Player_PickUp pUs;
+    public Image sAI;
 
     AudioSource gunAudio;
     bool canAttack;
@@ -25,7 +26,7 @@ public class Player_Attack : MonoBehaviour
 
     void Awake ()
     {
-        pUs = transform.parent.GetComponent<Player_PickUp>();
+        pUs = GetComponent<Player_PickUp>();
 
         gunAnim = GetComponent<Animator>();
 
@@ -35,27 +36,28 @@ public class Player_Attack : MonoBehaviour
 
         specialAbilityBar = 0;
 
-        //
-        //specialAbilityOn = true;
+        sAI.color = Color.blue;
     }
 	
 
 	void FixedUpdate ()
     {
+        if (specialAbilityBar == 100)
+        {
+            sAI.color = Color.yellow;
+        }
+
         if ((Input.GetButtonDown("R2") || Input.GetButtonDown("Fire1")) && canAttack == true && specialAbilityOn == false)
         {
-            //canAttack = false;
-            //gunAnim.SetBool("Attack", true);
-            Attack();
+            canAttack = false;
+            gunAnim.SetBool("Attack", true);
             gunAudio.clip = attackAudio;
             gunAudio.Play();
         }
         else if ((Input.GetButtonDown("R2") || Input.GetButtonDown("Fire1")) && canAttack == true && specialAbilityOn == true)
         {
             //canAttack = false;
-            gunAnim.SetBool("Attack", true);
             Instantiate(specialAttackBullet, bulletLocation.transform.position, bulletLocation.transform.rotation);
-            //glove.SetActive(false);
             gunAudio.clip = specialAttackAudio;
             gunAudio.Play();
         }
@@ -64,24 +66,12 @@ public class Player_Attack : MonoBehaviour
         {
             EnableSpecialAbility();
         }
-
-        //change its location
-        Mathf.Clamp(specialAbilityBar, 0, 100);
 	}
 
-    //called after an animation
     public void AllowAttack()
     {
-        if (specialAbilityOn == true)// work on this more after animation clear
-        {
-            gunAnim.SetBool("Attack", false);
-            gunAnim.SetBool("Reload", true);
-        }
-        else
-        {
             canAttack = true;
             gunAnim.SetBool("Attack", false);
-        }
     }
 
     void EnableSpecialAbility()
@@ -90,17 +80,30 @@ public class Player_Attack : MonoBehaviour
         InvokeRepeating("DecreaseSpecialAbilityBar", 1, 1);
     }
 
+    void DisableSpecialAbility()
+    {
+        specialAbilityOn = false;
+        sAI.color = Color.blue;
+    }
+
     //lower special ability bar at a rate of 5 points a second = 20 seconds ability
     void DecreaseSpecialAbilityBar()
     {
         specialAbilityBar -= decreaseAmount;
+        Mathf.Clamp(specialAbilityBar, 0, 100);
+        sAI.fillAmount = specialAbilityBar / 100;
+
+        if (specialAbilityBar <= 0)
+        {
+            DisableSpecialAbility();
+        }
     }
 
     void Attack()
     {
         if (Physics.Raycast(bulletLocation.transform.position, bulletLocation.transform.forward, out hit, normalBulletRange))
         {
-            if /*(hit.collider.name == "Enemy")*/(hit.collider.gameObject.CompareTag("Enemy"))
+            if (hit.collider.gameObject.CompareTag("Enemy"))
             {
                 EnemyHealth enemyHealth = hit.collider.GetComponent<EnemyHealth>();
                 enemyHealth.currentEnemyHealth -= normalBulletDamage;
